@@ -1,0 +1,55 @@
+﻿@model CascadingDropdownExample.Models.CascadingClass
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@Html.DropDownListFor(state => state.Sid, ViewBag.StateList as SelectList, "---Select State---", new { @class = "form-control" })
+@Html.DropDownListFor(city=>city.Cid,new SelectList(""),"---Select City---",new { @class="form-control"})
+@Html.DropDownListFor(location=>location.Lid,new SelectList(""),"---Select Location---",new { @class="form-control"})
+
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Sid").change(function () {
+            $("#Cid").empty();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetCities")',
+                dataType: 'json',
+                data: { Sid: $("#Sid").val() },
+                success: function (cities) {
+                    $.each(cities, function (i, city) {
+                        $("#Cid").append('<option value="' + city.Value + '">'+city.Text+'</option>')
+                    })
+
+                    
+                }
+            })
+        })
+
+    })
+
+
+</script>
+
+<script  type="text/javascript">
+    $(document).ready(function () {        
+        $("#Cid").change(function () {
+            $("#Lid").empty();
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("GetLocations")',
+                dataType: 'Json',
+                data: { Cid: $("#Cid").val() },
+                success: function (locations) {
+                    $.each(locations, function (i,location) {
+                        $("#Lid").append('<option value="' + location.Value + '">' + location.Text + '</option>')
+                    })
+                }
+            })
+        })
+    })
+</script>
